@@ -78,9 +78,9 @@ export default function Login() {
   )}`;
   const oauth_naver = `${naver_oauth.base_url}?client_id=${encodeURIComponent(
     naver_oauth.client_id,
-  )}&response_type=code&redirect_uri=${
-    process.env.VITE_BASE_URL
-  }${encodeURIComponent(naver_oauth.redirect_uri)}&state=STATE_STRING`;
+  )}&response_type=code&redirect_uri=${encodeURIComponent(
+    naver_oauth.redirect_uri,
+  )}&state=STATE_STRING`;
 
   return (
     <PageContainer>

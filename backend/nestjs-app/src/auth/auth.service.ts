@@ -3,6 +3,7 @@ import { Injectable, HttpException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { firstValueFrom } from 'rxjs';
+import axios from 'axios';
 
 @Injectable()
 export class AuthService {
@@ -45,6 +46,32 @@ export class AuthService {
       } else {
         return '-1';
       }
+    } catch (error) {
+      return '-1';
+    }
+  }
+
+  async getResourceOwnerNaverId(code: string, state: string): Promise<string> {
+    const apiUrl = `https://nid.naver.com/oauth2.0/token?grant_type=authorization_code&client_id=${this.configService.get(
+      'NAVER_OAUTH_CLIENT_ID',
+    )}&client_secret=${encodeURIComponent(
+      this.configService.get('NAVER_OAUTH_CLIENT_SECRET'),
+    )}&code=${code}&state=${state}`;
+
+    try {
+      const response = await axios.post(apiUrl);
+      console.log('response: ', response.data);
+      if (response.status == 200) {
+        const ret = await axios.get('https://openapi.naver.com/v1/nid/me', {
+          headers: {
+            Authorization: 'Bearer ' + response.data.access_token,
+          },
+        });
+        if (ret.status == 200) {
+          console.log('ret: ', ret.data);
+          return ret.data.response.id;
+        } else return '-1';
+      } else return '-1';
     } catch (error) {
       return '-1';
     }

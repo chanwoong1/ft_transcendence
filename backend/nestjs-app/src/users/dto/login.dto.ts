@@ -8,4 +8,7 @@ export class LoginDto {
   @IsString()
   @IsNotEmpty()
   type: string;
+
+  @IsString()
+  state: string;
 }

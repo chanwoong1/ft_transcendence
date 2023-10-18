@@ -42,15 +42,19 @@ export class UsersController {
 
   @Post('/login')
   async login(@Response() res, @Body() loginDto: LoginDto) {
-    const { code, type } = loginDto;
+    const { code, type, state } = loginDto;
+    let authId;
     let OwnerId;
 
     if (type === '42') {
-      OwnerId = await this.authService.getResourceOwner42Id(code);
-      OwnerId = '42-' + OwnerId;
+      authId = await this.authService.getResourceOwner42Id(code);
+      OwnerId = '42-' + authId;
     } else if (type === 'google') {
-      OwnerId = await this.authService.getResourceOwnerGoogleId(code);
-      OwnerId = 'G-' + OwnerId;
+      authId = await this.authService.getResourceOwnerGoogleId(code);
+      OwnerId = 'G-' + authId;
+    } else if (type === 'naver') {
+      authId = await this.authService.getResourceOwnerNaverId(code, state);
+      OwnerId = 'N-' + authId;
     } else {
       throw new HttpException(
         '유효하지 않은 로그인 유형입니다.',
@@ -58,7 +62,7 @@ export class UsersController {
       );
     }
 
-    if (OwnerId === '-1') {
+    if (authId === '-1') {
       throw new HttpException(
         "Can't get resourceOwner ID",
         HttpStatus.BAD_REQUEST,
@@ -74,15 +78,12 @@ export class UsersController {
         user.status === UserStatusType.SIGNUP
       ) {
         const jwt = await this.authService.sign(payload);
-        // if (user.status === UserStatusType.OFFLINE) {
-        //   await this.usersService.updateStatus(user, UserStatusType.ONLINE);
-        // }
-        console.log('jwt: ', jwt);
         res.setHeader('Authorization', 'Bearer ' + jwt);
         res.cookie('jwt', jwt, {
           maxAge: 3600000,
         });
         this.rootGateway.refreshUsersList();
+        console.log('로그인 성공');
         return res.send(user);
       } else {
         throw new HttpException('User is already online', HttpStatus.CONFLICT);

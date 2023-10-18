@@ -21,6 +21,7 @@ import { getDM } from "@src/api/dm";
 const AuthPage = () => {
   const type = useParams().type;
   const code = useSearchParams()[0].get("code");
+  const state = useSearchParams()[0].get("state");
   const [status, setStatus] = useState<
     "Loading" | "TwoFactor" | "TwoFactorLoading"
   >("Loading");
@@ -100,9 +101,14 @@ const AuthPage = () => {
     // clear recoil data
 
     if (status === "Loading") {
-      login(type as string, code as string)
+      login(
+        type as string,
+        code as string,
+        type === "naver" ? (state as string) : "",
+      )
         .then((response) => {
           // save user recoil data
+          console.log(response.data);
           setUserData(response.data);
           loadMyData(response.data.id);
           if (response.data.isTwoFactorAuthenticationEnabled) {
@@ -121,6 +127,7 @@ const AuthPage = () => {
           } else {
             console.error(error);
           }
+          alert("로그인에 실패했습니다.");
           navigate("/login");
         });
     } else if (status === "TwoFactorLoading") {

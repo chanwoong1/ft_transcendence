@@ -27,10 +27,12 @@ export const getUser = async (): Promise<AxiosResponse<UserType>> => {
 export const login = async (
   type: string,
   code: string,
+  state?: string,
 ): Promise<AxiosResponse<UserType>> => {
   const response = await axios.post(`${base_url}/users/login`, {
     type,
     code,
+    state,
   });
   return response;
 };

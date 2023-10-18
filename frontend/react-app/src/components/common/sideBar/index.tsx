@@ -15,7 +15,7 @@ export const sidebarConfig: SidebarConfigType = {
   "/user-list": { component: UserListSideBar },
   "/profile/": {
     component: ProfileSideBar,
-    matcher: /^\/profile\/(42-|G-|DUMMY-)\d+$/, // '42-' 혹은 'G-'로 시작하고 그 뒤에 숫자로만 이루어진 문자열이 나오는 경우만 매치합니다.
+    matcher: /^\/profile\/(42-\d+|G-\d+|N-.+|DUMMY-\d+)$/, // '42-' 혹은 'G-'로 시작하고 그 뒤에 숫자로만 이루어진 문자열이 나오는 경우만 매치합니다.
   },
   "/game/": { component: GameSideBar, matcher: /^\/game\/[\w-]+$/ },
 };
@@ -26,6 +26,7 @@ export const routeMatch = (
 ): SidebarComponentType | null => {
   for (const key in sidebarConfig) {
     const config = sidebarConfig[key];
+    console.log(config.matcher?.test(currentRoute) ? "true" : "false");
 
     // 만약 matcher가 있고 currentRoute와 일치한다면
     if (config.matcher?.test(currentRoute)) {
