@@ -49,8 +49,8 @@ export const LoginButtonImage = styled.img`
   background-color: white;
   width: 30px;
   height: 30px;
-  margin-left: 10px;
-  margin-right: 10px;
+  // margin-left: 10px;
+  // margin-right: 10px;
   border-radius: 2px;
 `;
 
