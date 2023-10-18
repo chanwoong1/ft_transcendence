@@ -51,3 +51,7 @@ fclean:
 re:
 	@make fclean
 	@make all
+
+redev:
+	@make fclean
+	@make develop
